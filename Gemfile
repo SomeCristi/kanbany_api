@@ -25,6 +25,10 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
+# For password hashing
+# https://github.com/codahale/bcrypt-ruby
+gem 'bcrypt', '~> 3.1.7'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -39,9 +43,20 @@ group :development do
 end
 
 group :test do
+  # For fixtures replacement in tests
+  # https://github.com/thoughtbot/factory_bot_rails
   gem 'factory_bot_rails'
+
+  # For creating oe-liner tests
+  # https://github.com/thoughtbot/shoulda-matchers
   gem 'shoulda-matchers'
+
+  # For generating fake data
+  # https://github.com/faker-ruby/faker
   gem 'faker'
+
+  # For cleaning the databses to ensure a clean state for testing
+  # https://github.com/DatabaseCleaner/database_cleaner
   gem 'database_cleaner'
 end
 
