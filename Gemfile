@@ -29,6 +29,10 @@ gem 'bootsnap', '>= 1.4.2', require: false
 # https://github.com/codahale/bcrypt-ruby
 gem 'bcrypt', '~> 3.1.7'
 
+# For OAuth JSON Web Token standard
+# https://github.com/jwt/ruby-jwt
+gem 'jwt'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
