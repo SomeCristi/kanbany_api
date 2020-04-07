@@ -1,9 +1,8 @@
 FactoryBot.define do
   factory :column do
     name { Faker::Name.name }
+    order { board.present? ? board.columns.count + 1 : 1}
     board { create(:board) }
     created_by { create(:user) }
-    # order { 1 }
   end
 end
-# order { board.columns.count + 1 }
