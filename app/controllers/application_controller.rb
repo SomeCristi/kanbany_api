@@ -4,7 +4,6 @@ class ApplicationController < ActionController::API
 
   # called before every action on controllers
   before_action :authorize_request
-  attr_reader :current_user
 
   private
 
