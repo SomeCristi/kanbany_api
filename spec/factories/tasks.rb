@@ -1,14 +1,9 @@
-# FactoryBot.define do
-#   factory :user do
-#     title { Faker::Lorem.sentence }
-#     created_by { create(:user) }
-#     order { 'Password4&' }
-#   end
-# end
+FactoryBot.define do
+  factory :task do
+    title { Faker::Lorem.sentence }
+    created_by { create(:user) }
+    order { column.present? ? column.tasks.count + 1 : 1}
+    column { create(:column) }
+  end
+end
 
-
-#     t.string "name", null: false
-#     t.text "description"
-#     t.bigint "created_by_id", null: false
-#     t.bigint "assigned_to_id"
-#     t.integer "order", null: failsafe
