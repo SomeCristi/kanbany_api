@@ -1,4 +1,11 @@
 class User < ApplicationRecord
+  PASSWORD_REQUIREMENTS = /\A
+    (?=.{8,}) # is at least 8 characters long
+    (?=.*\d) # contains at least one number
+    (?=.*[a-z]) # contains at least one lowercase letter
+    (?=.*[A-Z]) # contains at least one uppercase letter
+    (?=.*[[:^alnum:]]) # contains at least one symbol
+  /x
   # encrypt the password
   # Adds methods to set and authenticate against a BCrypt password.
   # This mechanism requires you to have a XXX_digest attribute.
@@ -13,7 +20,12 @@ class User < ApplicationRecord
 
   # Validations
   validates_presence_of :name, :email, :password_digest
+  validates :email, uniqueness: true, case_sensitive: false, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :password,
+    format: {
+      with: PASSWORD_REQUIREMENTS,
+      message: "Password must be at least 8 characters long with a at least: one upercase letter, one symbol and one number"
+    }
 end
 
 
-# TODO Add valdiations for password and email format
