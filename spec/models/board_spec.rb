@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Board, type: :model do
   describe "Associations" do
     it { should belong_to(:created_by) }
+    it { should have_many(:columns) }
   end
 
   describe "Validations" do

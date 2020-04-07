@@ -5,5 +5,5 @@ class Column < ApplicationRecord
   has_many :tasks
 
   # Validations
-  validates_presence_of :created_by, :name, :board
+  validates_presence_of :created_by, :name, :board, :order
 end
