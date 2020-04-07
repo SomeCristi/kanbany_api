@@ -33,6 +33,11 @@ gem 'bcrypt', '~> 3.1.7'
 # https://github.com/jwt/ruby-jwt
 gem 'jwt'
 
+# https://github.com/pry/pry
+gem 'pry', '~> 0.12.2'
+gem 'pry-remote'
+gem 'pry-nav'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
