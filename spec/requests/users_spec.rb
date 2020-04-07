@@ -1,4 +1,3 @@
-# spec/requests/users_spec.rb
 require 'rails_helper'
 
 RSpec.describe 'Users API', type: :request do
@@ -14,17 +13,20 @@ RSpec.describe 'Users API', type: :request do
   # User signup test suite
   describe 'POST /signup' do
     context 'when valid request' do
-      before { post '/signup', params: valid_attributes, headers: headers }
 
-      it 'creates a new user' do
+      subject { post '/signup', params: valid_attributes, headers: headers }
+
+      it 'ceturns HTTP status 201' do
+        subject
         expect(response).to have_http_status(201)
       end
 
-      it 'returns success message' do
-        expect(json['message']).to match(/Account created successfully/)
+      it 'creates a new user' do
+        expect{ subject }.to change{ User.count }.by(1)
       end
 
       it 'returns an authentication token' do
+        subject
         expect(json['auth_token']).not_to be_nil
       end
     end
