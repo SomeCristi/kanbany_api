@@ -43,6 +43,8 @@ class BoardsController < ApplicationController
     json_response(@boards)
   end
 
+  # TODO add destroy
+
   private
 
   def board_params
