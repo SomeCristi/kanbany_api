@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_08_090341) do
+ActiveRecord::Schema.define(version: 2020_04_08_142558) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 2020_04_08_090341) do
     t.bigint "created_by_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "order", null: false
+    t.integer "column_order", null: false
     t.index ["board_id"], name: "index_columns_on_board_id"
     t.index ["created_by_id"], name: "index_columns_on_created_by_id"
   end
@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(version: 2020_04_08_090341) do
     t.text "description"
     t.bigint "created_by_id", null: false
     t.bigint "assigned_to_id"
-    t.integer "order", null: false
+    t.integer "task_order", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "column_id", null: false
