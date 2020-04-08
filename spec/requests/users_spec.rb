@@ -16,17 +16,21 @@ RSpec.describe 'Users API', type: :request do
 
       subject { post '/signup', params: valid_attributes, headers: headers }
 
+      before do |example|
+        unless example.metadata[:skip_before]
+          subject
+        end
+      end
+
       it 'ceturns HTTP status 201' do
-        subject
         expect(response).to have_http_status(201)
       end
 
-      it 'creates a new user' do
+      it 'creates a new user', skip_before: true do
         expect{ subject }.to change{ User.count }.by(1)
       end
 
       it 'returns an authentication token' do
-        subject
         expect(json['auth_token']).not_to be_nil
       end
     end
