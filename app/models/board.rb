@@ -7,4 +7,16 @@ class Board < ApplicationRecord
 
   # Validations
   validates_presence_of :created_by, :name
+
+  # Callbacks
+
+  # it's called after the board is created
+  after_create :add_creator_as_member
+
+  private
+
+  # add the user that created the board as a member of the board
+  def add_creator_as_member
+    Membership.add_membership(created_by_id, id)
+  end
 end
