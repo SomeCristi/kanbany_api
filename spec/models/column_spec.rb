@@ -36,13 +36,34 @@ RSpec.describe Column, type: :model do
       end
     end
 
+    describe '#check_tasks_count' do
+      context 'when an column with tasks is being destroyed' do
+        let!(:column) { create(:column) }
+
+        before do
+         column.tasks << create(:task)
+         column.reload.destroy
+        end
+
+        it 'does not destroy the record' do
+          expect(Column.where(id: column.id)).to exist
+        end
+
+        it 'contains an error message' do
+          expect(column.errors.messages[:base]).
+          to include('Cannot delete record because dependent tasks exist')
+        end
+      end
+    end
+
+  context "Callbacks" do
+    let!(:board) { create(:board) }
+    let!(:first_column) { create(:column, board: board) }
+    let!(:second_column) { create(:column, board: board) }
+    let!(:third_column) { create(:column, board: board) }
+
     describe '#change_column_orders' do
       context 'when a new column is added to an pre-existing column order' do
-        let!(:board) { create(:board) }
-        let!(:first_column) { create(:column, board: board) }
-        let!(:second_column) { create(:column, board: board) }
-        let!(:third_column) { create(:column, board: board) }
-
         let!(:new_column) {
           create(:column, board: board, column_order: 2)
         }
@@ -57,49 +78,42 @@ RSpec.describe Column, type: :model do
           expect(third_column.reload.column_order).to eq(4)
         end
       end
-
-      # context 'when a new column is moved to an pre-existing column order' do
-      #   let!(:board) { create(:board) }
-      #   let!(:first_column) { create(:column, board: board) }
-      #   let!(:second_column) { create(:column, board: board) }
-      #   let!(:third_column) { create(:column, board: board) }
-
-      #   let!(:new_column) {
-      #     create(:column, board: board, column_order: 2)
-      #   }
-
-      #   before { new_column.update(column_order: 2) }
-
-      #   it 'adds the new column at the right column order' do
-      #     expect(new_column.column_order).to eq(2)
-      #   end
-
-      #   it 'moves the other columns accordingly' do
-      #     expect(first_column.reload.column_order).to eq(1)
-      #     expect(second_column.reload.column_order).to eq(3)
-      #     expect(third_column.reload.column_order).to eq(4)
-      #   end
-      # end
     end
 
-      describe '#check_tasks_count' do
-        context 'when an column with tasks is being destroyed' do
-          let!(:column) { create(:column) }
+    describe "#update_column_orders" do
+      context 'when a column is moved to the left' do
+        let!(:fourth_column) { create(:column, board: board) }
+        # not the order is first second third fourth column
+        before { fourth_column.update(column_order: 2) }
 
-          before do
-           column.tasks << create(:task)
-           column.reload.destroy
-          end
-
-          it 'does not destroy the record' do
-            expect(Column.where(id: column.id)).to exist
-          end
-
-          it 'contains an error message' do
-            expect(column.errors.messages[:base]).
-            to include('Cannot delete record because dependent tasks exist')
-          end
+        it 'adds the new column at the right column order' do
+          expect(fourth_column.column_order).to eq(2)
+        end
+        # now it is first fourth second third
+        it 'moves the other columns accordingly' do
+          expect(first_column.reload.column_order).to eq(1)
+          expect(second_column.reload.column_order).to eq(3)
+          expect(third_column.reload.column_order).to eq(4)
         end
       end
+
+      context 'when a column is moved to the left' do
+        let!(:fourth_column) { create(:column, board: board) }
+        # not the order is first second third fourth column
+        before { second_column.update(column_order: 4) }
+
+        it 'adds the new column at the right column order' do
+          expect(second_column.column_order).to eq(4)
+        end
+
+        # now it is first third fourth second
+        it 'moves the other columns accordingly' do
+          expect(first_column.reload.column_order).to eq(1)
+          expect(fourth_column.reload.column_order).to eq(3)
+          expect(third_column.reload.column_order).to eq(2)
+        end
+      end
+    end
+  end
   end
 end

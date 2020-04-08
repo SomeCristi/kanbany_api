@@ -18,7 +18,7 @@ class Column < ApplicationRecord
 
   # Callbacks
   before_create :change_column_orders
-  # before_save :update_column_orders
+  before_update :update_column_orders
 
   private
 
@@ -47,6 +47,13 @@ class Column < ApplicationRecord
     Column.where("column_order >= ?", column_order).update_all("column_order = column_order + 1")
   end
 
+  # Checks if column order has changed and if so
+  # checks if new order is bigger than old order(column was moved to the right)
+  # in this case it will move the other columns accordingly:
+  # all the columns with column order between the old and the new order(and equal to new) of the current
+  # column will have their column order reduced by 1
+  # else, if the new order of the current column is less than the old one
+  # (column was moved to the left) add + 1 to the columns orders between the new(and equal) and the old one
   def update_column_orders
     if column_order_changed?
       if column_order > column_order_in_database
@@ -58,9 +65,10 @@ class Column < ApplicationRecord
   end
 
   def column_change_to_right
-    Column.where("column_order >= ?", column_order).update_all("column_order = column_order + 1")
+    Column.where("column_order <= ? AND column_order > ?", column_order, column_order_in_database).update_all("column_order = column_order -1")
   end
 
   def column_change_to_left
+    Column.where("column_order < ? AND column_order >= ?", column_order_in_database, column_order).update_all("column_order = column_order + 1")
   end
 end
