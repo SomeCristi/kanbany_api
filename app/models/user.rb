@@ -17,7 +17,7 @@ class User < ApplicationRecord
   has_many :created_tasks, class_name: "Task", foreign_key: "created_by_id", dependent: :destroy
   has_many :boards, class_name: "Board", foreign_key: "created_by_id"
   has_many :columns, class_name: "Column", foreign_key: "created_by_id"
-  has_many :memberships
+  has_many :memberships, dependent: :destroy
   has_many :boards, through: :memberships
 
   # Validations
