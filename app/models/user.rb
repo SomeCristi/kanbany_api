@@ -6,7 +6,7 @@ class User < ApplicationRecord
     (?=.*[A-Z]) # contains at least one uppercase letter
     (?=.*[[:^alnum:]]) # contains at least one symbol
   /x
-  # encrypt the password
+  # Encrypts the password
   # Adds methods to set and authenticate against a BCrypt password.
   # This mechanism requires you to have a XXX_digest attribute.
   # Where XXX is the attribute name of your desired password
@@ -21,8 +21,10 @@ class User < ApplicationRecord
   has_many :boards, through: :memberships
 
   # Validations
-  validates_presence_of :name, :email, :password_digest
+  validates :name, :email, :password_digest, presence: true
+
   validates :email, uniqueness: true, case_sensitive: false, format: { with: URI::MailTo::EMAIL_REGEXP }
+
   validates :password,
     format: {
       with: PASSWORD_REQUIREMENTS,
