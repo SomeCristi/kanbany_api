@@ -6,5 +6,5 @@ class Task < ApplicationRecord
   belongs_to :column
 
   # Validations
-  validates_presence_of :created_by, :title, :order, :column
+  validates :created_by, :title, :task_order, :column, presence: true
 end
