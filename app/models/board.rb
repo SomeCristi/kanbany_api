@@ -6,11 +6,9 @@ class Board < ApplicationRecord
   has_many :users, through: :memberships
 
   # Validations
-  validates_presence_of :created_by, :name
+  validates :created_by, :name, presence: true
 
   # Callbacks
-
-  # it's called after the board is created
   after_create :add_creator_as_member
 
   private
