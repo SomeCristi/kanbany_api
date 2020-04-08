@@ -42,7 +42,7 @@ class ColumnsController < ApplicationController
   # returns 200 if successful
   # returns 401 and an error message if request is unauthorized
   def index
-    @columns = Column.where(board_id: @board).order(:column_order)
+    @columns = Column.where(board_id: @board.id).order(:column_order)
     json_response(@columns)
   end
 
