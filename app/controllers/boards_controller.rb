@@ -5,6 +5,7 @@ class BoardsController < ApplicationController
   # creates a new board record with the requested params
   # returns 201 is successful
   # returns 422 if the provided params are not good
+  # returns 401 if request is unauthorized and an error message
   def create
     board = Board.create!(board_params.merge(created_by: @current_user))
     json_response(board, :created)
@@ -16,7 +17,7 @@ class BoardsController < ApplicationController
   # returns 422 if the provided params are not good
   # returns 404 if the resource does not exist
   # return 403 if user is not a member
-  # returns 401 if request is unauthorized
+  # returns 401 if request is unauthorized and an error message
   def update
     @board.update!(board_params)
     json_response(@board)
@@ -27,7 +28,7 @@ class BoardsController < ApplicationController
   # returns 200 if successful
   # returns 404 if resource does not exists
   # return 403 if user is not a member
-  # returns 401 if request is unauthorized
+  # returns 401 if request is unauthorized and an error message
   def show
     json_response(@board)
   end
@@ -35,7 +36,7 @@ class BoardsController < ApplicationController
   # GET /boards
   # returns the boards of which the user is a member
   # returns 200 if successful
-  # returns 401 if request is unauthorized
+  # returns 401 if request is unauthorized and an error message
   def index
     @boards = Board.joins(:memberships).where('memberships.user_id= ?', @current_user.id)
     json_response(@boards)
