@@ -19,7 +19,7 @@ RSpec.describe Task, type: :model do
   describe "Validations" do
     it { should validate_presence_of(:created_by) }
     it { should validate_presence_of(:title) }
-    it { should validate_presence_of(:order) }
+    it { should validate_presence_of(:task_order) }
   end
 end
 

@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe 'Boards API', type: :request do
   let(:user) { create(:user) }
-  let(:headers) { valid_headers }
   let(:valid_params) do
     { board: attributes_for(:board) }
   end
@@ -18,7 +17,7 @@ RSpec.describe 'Boards API', type: :request do
   # Board creation test suite
   describe 'POST /boards' do
     context 'when valid request' do
-      subject { post '/boards', params: valid_params, headers: headers }
+      subject { post '/boards', params: valid_params, headers: valid_headers }
 
       # calls subject before all examples that do not use
       # skip_before: true
@@ -52,7 +51,7 @@ RSpec.describe 'Boards API', type: :request do
     end
 
     context 'when invalid request' do
-      subject { post '/boards', params: { board: { name: "" } }, headers: headers }
+      subject { post '/boards', params: { board: { name: "" } }, headers: valid_headers }
 
       before do |example|
         unless example.metadata[:skip_before]
@@ -86,7 +85,7 @@ RSpec.describe 'Boards API', type: :request do
   # Board update test suite
   describe 'PUT /boards/:id' do
     context 'when valid request' do
-      before { put "/boards/#{board.id}", params: valid_params, headers: headers }
+      before { put "/boards/#{board.id}", params: valid_params, headers: valid_headers }
 
 
       it 'returns HTTP status 200' do
@@ -103,7 +102,7 @@ RSpec.describe 'Boards API', type: :request do
     end
 
     context 'when invalid request' do
-      before { put "/boards/#{board.id}", params: { board: { name: "" } }, headers: headers }
+      before { put "/boards/#{board.id}", params: { board: { name: "" } }, headers: valid_headers }
 
       it 'returns HTTP status 422' do
         expect(response).to have_http_status(422)
@@ -131,7 +130,7 @@ RSpec.describe 'Boards API', type: :request do
     end
 
     context 'when user is not a member' do
-      before { put "/boards/#{not_a_member_board.id}", params: valid_params, headers: headers }
+      before { put "/boards/#{not_a_member_board.id}", params: valid_params, headers: valid_headers }
 
       it 'returns HTTP status 403' do
         expect(response).to have_http_status(403)
@@ -139,9 +138,10 @@ RSpec.describe 'Boards API', type: :request do
     end
   end
 
+  # Board show test suite
   describe 'GET /boards/:id' do
     context 'when valid request' do
-      before { get "/boards/#{board.id}", headers: headers }
+      before { get "/boards/#{board.id}", headers: valid_headers }
 
 
       it 'returns HTTP status 200' do
@@ -154,7 +154,7 @@ RSpec.describe 'Boards API', type: :request do
     end
 
     context 'when board does not exist' do
-      before { get "/boards/#{board.id + 100}", headers: headers }
+      before { get "/boards/#{board.id + 100}", headers: valid_headers }
 
       it 'returns HTTP status 404' do
         expect(response).to have_http_status(404)
@@ -162,7 +162,7 @@ RSpec.describe 'Boards API', type: :request do
     end
 
     context 'when user is not a member' do
-      before { get "/boards/#{not_a_member_board.id}", headers: headers }
+      before { get "/boards/#{not_a_member_board.id}", headers: valid_headers }
 
       it 'returns HTTP status 403' do
         expect(response).to have_http_status(403)
@@ -182,11 +182,12 @@ RSpec.describe 'Boards API', type: :request do
     end
   end
 
+  # Board index test suite
   describe 'GET /boards' do
     let!(:second_board) { create(:board, created_by: user) }
 
     context 'when valid request' do
-      before { get "/boards", headers: headers }
+      before { get "/boards", headers: valid_headers }
 
       it 'returns HTTP status 200' do
         expect(response).to have_http_status(200)
