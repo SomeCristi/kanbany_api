@@ -3,7 +3,7 @@ class Membership < ApplicationRecord
   belongs_to :board
 
   # Validations
-  validates_presence_of :user, :board
+  validates :user, :board, presence: true
 
   def self.is_member?(user_id, board_id)
     self.where(user_id: user_id, board_id: board_id).exists?
