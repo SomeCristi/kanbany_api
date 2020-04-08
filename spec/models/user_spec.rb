@@ -4,8 +4,9 @@ RSpec.describe User, type: :model do
   describe "Associations" do
     it { should have_many(:tasks).dependent(:nullify) }
     it { should have_many(:created_tasks).dependent(:destroy) }
-    it { should have_many(:boards) }
     it { should have_many(:columns) }
+    it { should have_many(:boards) }
+    it { should have_many(:boards).through(:memberships) }
   end
 
   describe "Validations" do
