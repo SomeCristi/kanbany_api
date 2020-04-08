@@ -6,8 +6,8 @@ class ApplicationController < ActionController::API
   before_action :authorize_request
 
   def set_board
-    id = params[:board_id].present? ? params[:board_id] : params[:id]
-    @board = Board.find(id)
+    board_id = params[:board_id].present? ? params[:board_id] : params[:id]
+    @board = Board.find(board_id)
     json_response({ message: "Forbidden from accessing this board" }, :forbidden) unless has_membership?
   end
 
@@ -20,7 +20,7 @@ class ApplicationController < ActionController::API
 
   # checks if the current user is a member of the requested column
   def has_membership?
-    Membership.is_member?(@current_user.id, params[:id])
+    Membership.is_member?(@current_user.id, @board.id)
   end
 
   # Check for valid request token and return user
