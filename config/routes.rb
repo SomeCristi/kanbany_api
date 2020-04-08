@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   resources :boards do
-    resources :columns
+    resources :columns do
+      resources :tasks
+    end
     # post :add_user TODO add a way to add users to board
   end
 
