@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :board do
-    name { "Board" }
+    name { Faker::Name.name }
     created_by { create(:user) }
   end
 end
