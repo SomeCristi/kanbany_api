@@ -83,7 +83,8 @@ RSpec.describe 'Columns API', type: :request do
   # Column update test suite
   describe 'PUT /boards/:board_id/columns/:id' do
     context 'when valid request' do
-    let!(:second_column) { create(:column, created_by: user, board: board) }
+      let!(:second_column) { create(:column, created_by: user, board: board) }
+
       before { put "/boards/#{board.id}/columns/#{column.id}", params: valid_params, headers: valid_headers }
 
 
@@ -214,6 +215,75 @@ RSpec.describe 'Columns API', type: :request do
 
     context 'when unauthorized request' do
       before { get "/boards/#{board.id}/columns", headers: missing_token_headers }
+
+      it 'returns HTTP status 401' do
+        expect(response).to have_http_status(401)
+      end
+
+      it 'returns error message' do
+        expect(json['message']).to match(/Missing token/)
+      end
+    end
+  end
+
+  # Column deletion test suite
+  describe 'DELETE /boards/:board_id/columns/:id' do
+    context 'when valid request' do
+      before { delete "/boards/#{board.id}/columns/#{column.id}", headers: valid_headers }
+
+      it 'returns HTTP status 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'deletes the record' do
+        expect(Column.where(id: column.id)).not_to exist
+      end
+
+      it 'returns the deleted record' do
+        expect(json["column_order"]).to eq(column.column_order)
+        expect(json["board_id"]).to eq(column.board_id)
+        expect(json["created_by_id"]).to eq(column.created_by_id)
+      end
+    end
+
+    context 'when the column has tasks' do
+      before do
+        column.tasks << create(:task)
+        delete "/boards/#{board.id}/columns/#{column.id}", headers: valid_headers
+      end
+
+      it 'returns HTTP status 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'does not delete the record' do
+        expect(Column.where(id: column.id)).to exist
+      end
+
+      it 'returns failure message' do
+        expect(json["base"]).to include("Cannot delete record because dependent tasks exist")
+      end
+    end
+
+    context 'when invalid request' do
+      let!(:fake_column_id) { column.id + 100 }
+      before { delete "/boards/#{board.id}/columns/#{fake_column_id}", headers: valid_headers }
+
+      it 'returns HTTP status 422' do
+        expect(response).to have_http_status(404)
+      end
+
+      it 'does not delete the record' do
+        expect(Column.where(id: column.id)).to exist
+      end
+
+      it 'returns failure message' do
+        expect(json["message"]).to include("Couldn't find Column with 'id'=#{fake_column_id}")
+      end
+    end
+
+    context 'when unauthorized request' do
+      before { delete "/boards/#{board.id}/columns/#{column.id}", params: valid_params, headers: missing_token_headers }
 
       it 'returns HTTP status 401' do
         expect(response).to have_http_status(401)

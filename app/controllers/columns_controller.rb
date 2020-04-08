@@ -1,5 +1,5 @@
 class ColumnsController < ApplicationController
-  before_action :set_column, only: [:show, :update]
+  before_action :set_column, only: [:show, :update, :destroy]
   before_action :set_board
 
   # POST /boards/:board_id/columns
@@ -47,7 +47,11 @@ class ColumnsController < ApplicationController
   end
 
   def destroy
-    @column.destroy!
+    if @column.destroy
+      json_response(@column)
+    else
+      json_response(@column.errors, :unprocessable_entity)
+    end
   end
 
   private
