@@ -46,6 +46,11 @@ class ColumnsController < ApplicationController
     json_response(@columns)
   end
 
+  # DELETE /boards/:board_id/columns/:id
+  # returns 200 if successful and the deleted object
+  # returns 401 and an error message if request is unauthorized
+  # return 422 if the deletion cannot be done + message error
+  # record can only be deleted if it has no tasks
   def destroy
     if @column.destroy
       json_response(@column)
