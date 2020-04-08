@@ -124,6 +124,10 @@ RSpec.describe 'Boards API', type: :request do
       it 'returns HTTP status 401' do
         expect(response).to have_http_status(401)
       end
+
+      it 'returns error message' do
+        expect(json['message']).to match(/Missing token/)
+      end
     end
 
     context 'when user is not a member' do
@@ -171,6 +175,10 @@ RSpec.describe 'Boards API', type: :request do
       it 'returns HTTP status 401' do
         expect(response).to have_http_status(401)
       end
+
+      it 'returns error message' do
+        expect(json['message']).to match(/Missing token/)
+      end
     end
   end
 
@@ -216,6 +224,10 @@ RSpec.describe 'Boards API', type: :request do
 
       it 'returns HTTP status 401' do
         expect(response).to have_http_status(401)
+      end
+
+      it 'returns error message' do
+        expect(json['message']).to match(/Missing token/)
       end
     end
   end
