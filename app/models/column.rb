@@ -19,6 +19,8 @@ class Column < ApplicationRecord
   # Callbacks
   before_create :change_column_orders
   before_update :update_column_orders
+  # TODO test
+  before_destroy :rearrange_columns
 
   private
 
@@ -39,6 +41,12 @@ class Column < ApplicationRecord
     end
   end
 
+  def rearrange_columns
+    Column
+      .where('column_order >=? AND board_id = ?', column_order, board_id)
+      .update_all('column_order = column_order - 1')
+  end
+
   # Updates all the columns that have column order greater or equal than
   # current column order to have their old order value + 1.
   # This uses only one SQL UPDATE Statement
@@ -46,7 +54,7 @@ class Column < ApplicationRecord
   # on the second position, the columns that were on position 2 and 3 will be on position 3 and 4
   def change_column_orders
     Column
-      .where("column_order >= ?", column_order)
+      .where("column_order >= ? AND board_id = ?", column_order, board_id)
       .update_all("column_order = column_order + 1")
   end
 
@@ -71,13 +79,13 @@ class Column < ApplicationRecord
 
   def column_moved_to_right
     Column
-      .where("column_order <= ? AND column_order > ?", column_order, column_order_in_database)
+      .where("column_order <= ? AND column_order > ? AND board_id = ?", column_order, column_order_in_database, board_id)
       .update_all("column_order = column_order -1")
   end
 
   def column_moved_to_left
     Column
-      .where("column_order < ? AND column_order >= ?", column_order_in_database, column_order)
+      .where("column_order < ? AND column_order >= ? AND board_id = ?", column_order_in_database, column_order, board_id)
       .update_all("column_order = column_order + 1")
   end
 end

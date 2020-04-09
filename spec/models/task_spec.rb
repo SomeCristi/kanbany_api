@@ -44,7 +44,7 @@ RSpec.describe Task, type: :model do
       end
     end
 
-    describe 'assigned_to_user_exists' do
+    describe '#assigned_to_user_exists' do
       context 'user does not exist' do
         let!(:task) { build(:task, assigned_to_id: create(:user).id + 100) }
 
@@ -78,6 +78,25 @@ RSpec.describe Task, type: :model do
           expect(task.errors.messages[:assigned_to_id]).
             to include('must be a member of this board')
         end
+      end
+    end
+
+    describe '#column_from_same_board' do
+      let!(:task) { create(:task) }
+      let!(:board) { create(:board) }
+      let!(:column) { create(:column, board: board) }
+
+      before do
+        task.update(column: column)
+        task.valid?
+      end
+
+      it 'returns task as not valid' do
+        expect(task.valid?).to eq(false)
+      end
+      it 'contains an error message' do
+        expect(task.errors.messages[:column_id]).
+          to include('new column must be from the same board')
       end
     end
   end

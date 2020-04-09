@@ -40,7 +40,7 @@ RSpec.describe Column, type: :model do
         let!(:column) { create(:column) }
 
         before do
-         column.tasks << create(:task)
+         create(:task, column: column)
          column.reload.destroy
         end
 

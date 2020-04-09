@@ -264,7 +264,7 @@ RSpec.describe 'Columns API', type: :request do
 
     context 'when the column has tasks' do
       before do
-        column.tasks << create(:task)
+        create(:task, column: column)
         delete "/boards/#{board.id}/columns/#{column.id}", headers: valid_headers
       end
 

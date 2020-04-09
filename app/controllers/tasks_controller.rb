@@ -19,6 +19,8 @@ class TasksController < ApplicationController
 
   # PUT/PATCH /boards/:board_id/columns/:column_id/tasks/:id
   # updates the task with the requested params
+  # if task's column is changed then the task order must be
+  # provided
   # return 200 if successful
   # return 422 if the provided params are not good
   # return 404 if the resource does not exist

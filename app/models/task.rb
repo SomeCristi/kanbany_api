@@ -10,10 +10,14 @@ class Task < ApplicationRecord
   validates :task_order, numericality: { greater_than: 0 }
   validate :check_task_order
   validate :assigned_to_user
+  validate :column_from_same_board
 
   # Callbacks
   before_create :change_task_orders
   before_update :update_task_orders
+  # TODO tests
+  before_destroy :rearrange_tasks
+
 
   private
 
@@ -42,7 +46,7 @@ class Task < ApplicationRecord
   # the tasks that were on position 2 and 3 will be on position 3 and 4
   def change_task_orders
     Task
-      .where("task_order >= ?", task_order)
+      .where("task_order >= ? AND column_id = ?", task_order, column_id)
       .update_all("task_order = task_order + 1")
   end
 
@@ -55,25 +59,36 @@ class Task < ApplicationRecord
   # else, if the new order of the current task is less than the old one
   # (task was moved up) add + 1 to the tasks orders between the new(and equal) and the old one
   def update_task_orders
-    if task_order_changed?
-      if task_order > task_order_in_database
-        task_moved_down
-      else
-        task_moved_up
+    if column_id_changed?
+      rearrange_tickets_old_column
+      rearrange_tickets_new_column
+    else
+      if task_order_changed?
+        if task_order > task_order_in_database
+          task_moved_down
+        else
+          task_moved_up
+        end
       end
     end
   end
 
   def task_moved_down
     Task
-      .where('task_order <= ? AND task_order > ?', task_order, task_order_in_database)
+      .where('task_order <= ? AND task_order > ? AND column_id = ?', task_order, task_order_in_database, column)
       .update_all('task_order = task_order -1')
   end
 
   def task_moved_up
     Task
-      .where('task_order < ? AND task_order >= ?', task_order_in_database, task_order)
+      .where('task_order < ? AND task_order >= ? AND column_id = ?', task_order_in_database, task_order, column)
       .update_all('task_order = task_order + 1')
+  end
+
+  def rearrange_tasks
+    Task
+      .where('task_order >=? AND column_id = ?', task_order, column)
+      .update_all('task_order = task_order - 1')
   end
 
   def assigned_to_user
@@ -93,4 +108,29 @@ class Task < ApplicationRecord
     end
   end
 
+  def column_from_same_board
+    if column_id_changed? && column_id_in_database != nil
+      new_column_board = column.board.id
+      # use find as old column still exists
+      # because a column with no tickets cannot
+      # be deleted
+      old_column_board = Column.find(column_id_in_database).board.id
+      errors.add(
+        :column_id,
+        'new column must be from the same board'
+      ) if new_column_board != old_column_board
+    end
+
+    def rearrange_tickets_new_column
+    Task
+      .where('column_id = ? AND task_order >= ?', column_id, task_order)
+      .update_all('task_order = task_order + 1')
+    end
+
+    def rearrange_tickets_old_column
+    Task
+      .where('column_id = ? AND task_order > ?', column_id_in_database, task_order_in_database)
+      .update_all('task_order = task_order -1')
+    end
+  end
 end
