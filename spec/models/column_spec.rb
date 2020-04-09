@@ -26,7 +26,7 @@ RSpec.describe Column, type: :model do
 
       before { invalid_column.valid? }
 
-      it 'returns board as not valid' do
+      it 'returns column as not valid' do
         expect(invalid_column.valid?).to eq(false)
       end
 
@@ -35,7 +35,6 @@ RSpec.describe Column, type: :model do
           to include('must be maximum last column order + 1')
       end
     end
-
     describe '#check_tasks_count' do
       context 'when an column with tasks is being destroyed' do
         let!(:column) { create(:column) }
@@ -55,6 +54,7 @@ RSpec.describe Column, type: :model do
         end
       end
     end
+  end
 
   context "Callbacks" do
     let!(:board) { create(:board) }
@@ -97,7 +97,7 @@ RSpec.describe Column, type: :model do
         end
       end
 
-      context 'when a column is moved to the left' do
+      context 'when a column is moved to the right' do
         let!(:fourth_column) { create(:column, board: board) }
         # not the order is first second third fourth column
         before { second_column.update(column_order: 4) }
@@ -114,6 +114,5 @@ RSpec.describe Column, type: :model do
         end
       end
     end
-  end
   end
 end
