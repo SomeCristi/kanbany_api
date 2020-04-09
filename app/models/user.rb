@@ -21,7 +21,7 @@ class User < ApplicationRecord
   has_many :boards, through: :memberships
 
   # Validations
-  validates :name, :email, :password_digest, presence: true
+  validates :name, :email, :password_digest, :role, presence: true
 
   validates :email, uniqueness: true, case_sensitive: false, format: { with: URI::MailTo::EMAIL_REGEXP }
 
@@ -30,6 +30,9 @@ class User < ApplicationRecord
       with: PASSWORD_REQUIREMENTS,
       message: "Password must be at least 8 characters long with a at least: one upercase letter, one symbol and one number"
     }
+
+  # Enums
+  enum role: { admin: 0, developer: 1, project_manager: 2, normal: 3 }
 end
 
 
