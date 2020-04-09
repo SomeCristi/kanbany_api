@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
   resources :boards do
+    resources :memberships, only: [:create]
     resources :columns do
       resources :tasks
     end
-    # post :add_user TODO add a way to add users to board
   end
 
   post 'auth/login', to: 'authentication#authenticate'
