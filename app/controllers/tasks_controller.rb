@@ -83,6 +83,6 @@ class TasksController < ApplicationController
 
   def set_task
     @task = Task.where(id: params[:id], column_id: params[:column_id]).first
-    json_response({ message: "Task with id #{params[:id]} not found"}, :not_found) unless @task
+    json_response({ message: "Couldn't find Task with 'id'=#{params[:id]}"}, :not_found) unless @task
   end
 end

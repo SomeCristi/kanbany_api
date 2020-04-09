@@ -14,7 +14,7 @@ class ApplicationController < ActionController::API
   def set_column
     id = params[:column_id].present? ? params[:column_id] : params[:id]
     @column = Column.where(id: id, board_id: params[:board_id]).first
-    json_response({ message: "Column with id #{id} not found"}, :not_found) unless @column
+    json_response({ message: "Couldn't find Column with 'id'=#{id}"}, :not_found) unless @column
   end
 
   private
