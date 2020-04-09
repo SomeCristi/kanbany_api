@@ -14,7 +14,7 @@ class BoardsController < ApplicationController
     json_response(@board, :created)
   end
 
-  # PUT/PATCH /boards/:id
+  # PUT /boards/:id
   # updates the board with the requested params
   # return 200 if successful
   # return 422 if the provided params are not good

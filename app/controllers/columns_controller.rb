@@ -19,7 +19,7 @@ class ColumnsController < ApplicationController
     json_response(@column, :created)
   end
 
-  # PUT/PATCH /boards/:board_id/columns/:id
+  # PUT /boards/:board_id/columns/:id
   # updates the column with the requested params
   # return 200 if successful
   # return 422 if the provided params are not good

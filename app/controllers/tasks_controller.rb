@@ -20,7 +20,7 @@ class TasksController < ApplicationController
     json_response(@task, :created)
   end
 
-  # PUT/PATCH /boards/:board_id/columns/:column_id/tasks/:id
+  # PUT /boards/:board_id/columns/:column_id/tasks/:id
   # updates the task with the requested params
   # if task's column is changed then the task order must be
   # provided
