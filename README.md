@@ -47,14 +47,13 @@ Tasks can also be moved between columns(if task order will not be specified, the
 `d`  `d'`
 \
 -> move `b` between `c'` and `d'` (position 4)\
-`a`  `a'`\
-`c`  `b'`\
-`d`  `c'`\
-`_`     `b`
-\
-`_`    `d'`
-
-
+```ruby
+`a`  `a'`
+`c`  `b'`
+`d`  `c'`
+     `b`
+`    `d'`
+```
 * Roles\
 The API has a simple role system. The roles are: `admin`,`normal`,`developer`,`project_manager`.\
 `Admins` can do every action. `Project_managers` and `developers` cannot create and update a board, create and update a column and change the role of a user. Moreover, `developers` cannot assign users to boards, add and delete tasks.
