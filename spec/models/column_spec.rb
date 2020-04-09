@@ -56,7 +56,7 @@ RSpec.describe Column, type: :model do
     end
   end
 
-  context "Callbacks" do
+  context 'Callbacks' do
     let!(:board) { create(:board) }
     let!(:first_column) { create(:column, board: board) }
     let!(:second_column) { create(:column, board: board) }
@@ -80,7 +80,7 @@ RSpec.describe Column, type: :model do
       end
     end
 
-    describe "#update_column_orders" do
+    describe '#update_column_orders' do
       context 'when a column is moved to the left' do
         let!(:fourth_column) { create(:column, board: board) }
         # not the order is first second third fourth column
@@ -111,6 +111,22 @@ RSpec.describe Column, type: :model do
           expect(first_column.reload.column_order).to eq(1)
           expect(fourth_column.reload.column_order).to eq(3)
           expect(third_column.reload.column_order).to eq(2)
+        end
+      end
+    end
+
+    describe '#rearrange_columns' do
+      context 'when a column is deleted' do
+        let!(:fourth_column) { create(:column, board: board) }
+
+        before { second_column.destroy }
+
+        # first second third fourth-> first third fourth
+
+        it "rearranges collumn accordingly" do
+          expect(first_column.reload.column_order).to eq(1)
+          expect(third_column.reload.column_order).to eq(2)
+          expect(fourth_column.reload.column_order).to eq(3)
         end
       end
     end

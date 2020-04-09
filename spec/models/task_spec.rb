@@ -193,6 +193,22 @@ RSpec.describe Task, type: :model do
         end
       end
     end
+
+    describe '#rearrange_tasks' do
+      context 'when a task is deleted' do
+        let!(:third_task) { create(:task, column: column) }
+
+        before { second_task.destroy }
+
+        # first second third fourth-> first third fourth
+
+        it "rearranges collumn accordingly" do
+          expect(first_task.reload.task_order).to eq(1)
+          expect(third_task.reload.task_order).to eq(2)
+          expect(fourth_task.reload.task_order).to eq(3)
+        end
+      end
+    end
   end
 end
 
