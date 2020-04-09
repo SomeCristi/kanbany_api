@@ -1,18 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe 'Users API', type: :request do
-  let(:user) { build(:user) }
-  let(:headers) { valid_headers.except('Authorization') }
-  let(:valid_attributes) do
-    {
-      user:
-        attributes_for(:user, password_confirmation: user.password)
-    }
-  end
 
   # User signup test suite
   describe 'POST /signup' do
+    let(:user) { build(:user) }
+    let(:headers) { valid_headers.except('Authorization') }
+
     context 'when valid request' do
+      let(:valid_attributes) do
+        {
+          user:
+            attributes_for(:user, password_confirmation: user.password)
+        }
+      end
 
       subject { post '/signup', params: valid_attributes, headers: headers }
 
@@ -45,6 +46,60 @@ RSpec.describe 'Users API', type: :request do
       it 'returns failure message' do
         expect(json['message'])
           .to include("Validation failed: Password can't be blank")
+      end
+    end
+  end
+
+  # User change role test suite
+  describe 'PUT /change_role' do
+    let(:user) { create(:user) }
+    let!(:another_user) { create(:user) }
+    context 'when valid request' do
+      let(:valid_attributes) do
+        {
+          user: {
+            role: "developer"
+          }
+        }
+      end
+
+      subject { put "/users/#{another_user.id}/change_role", params: valid_attributes, headers: valid_headers }
+
+      before do
+        subject
+      end
+
+      it 'returns HTTP status 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'changes the role' do
+        expect(another_user.reload.role).to eq(valid_attributes[:user][:role])
+      end
+    end
+
+    context 'when invalid request' do
+      let(:invalid_attributes) do
+        {
+          user: {
+            role: ""
+          }
+        }
+      end
+
+      before {
+        put "/users/#{another_user.id}/change_role",
+        params: invalid_attributes,
+        headers: valid_headers
+      }
+
+      it 'does not create a new user' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns failure message' do
+        expect(json['message'])
+          .to include("Validation failed: Role can't be blank")
       end
     end
   end
