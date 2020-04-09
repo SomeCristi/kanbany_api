@@ -4,6 +4,7 @@ class Membership < ApplicationRecord
 
   # Validations
   validates :user, :board, presence: true
+  validates :user_id, uniqueness: { scope: :board_id }
 
   def self.is_member?(user_id, board_id)
     self.where(user_id: user_id, board_id: board_id).exists?

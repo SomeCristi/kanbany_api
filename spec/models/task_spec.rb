@@ -122,4 +122,3 @@ RSpec.describe Task, type: :model do
 end
 
 
-# TODO test that a user that does not exists cannot be assigned
