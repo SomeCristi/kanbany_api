@@ -27,3 +27,9 @@ postgresql is used as the database for Active Record
 A user with admin role must be created from the rails console. Users can be created via API calls but their default role will be `normal` and only an admin can change their role.\
 \
 The flow of creation is boards -> columns -> tasks\. For this 3 resources all CRUD operations are available, besides DELETE for boards.
+
+* Roles\
+The API has a simple role system. The roles are: `admin`,`normal`,`developer`,`project_manager`.\
+`Admin` can do every action. `Project_managers` and `developers` cannot create and update a board, create and update a column and change the role of a user. Moreover, `developers` cannot assign users to boards, add and delete tasks.
+The users with `normal` role cannot do any actions.
+
