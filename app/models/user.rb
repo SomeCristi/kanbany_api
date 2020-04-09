@@ -29,7 +29,7 @@ class User < ApplicationRecord
     format: {
       with: PASSWORD_REQUIREMENTS,
       message: "Password must be at least 8 characters long with a at least: one upercase letter, one symbol and one number"
-    }
+    }, on: :create
 
   # Enums
   enum role: { admin: 0, developer: 1, project_manager: 2, normal: 3 }
