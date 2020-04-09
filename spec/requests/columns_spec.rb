@@ -43,8 +43,12 @@ RSpec.describe 'Columns API', type: :request do
         expect(json["created_by_id"]).to eq(user.id)
       end
 
-      it 'return the correct column order' do
+      it 'returns the correct column order' do
         expect(json["column_order"]).to eq(valid_params[:column][:column_order])
+      end
+
+      it 'returns the correct board id' do
+        expect(json["board_id"]).to eq(valid_params[:column][:board][:id])
       end
     end
 
@@ -100,8 +104,10 @@ RSpec.describe 'Columns API', type: :request do
         expect(json["column_order"]).to eq(valid_params[:column][:column_order])
       end
 
-      it 'updates the record' do
-        expect(column.reload.name).to eq(valid_params[:column][:name])
+      it 'saves the changes in the DB' do
+        column.reload
+        expect(column.name).to eq(valid_params[:column][:name])
+        expect(column.column_order).to eq(valid_params[:column][:column_order])
       end
     end
 
@@ -153,8 +159,9 @@ RSpec.describe 'Columns API', type: :request do
       end
     end
 
-    context 'when board does not exist' do
-      before { get "/boards/#{board.id}/columns/#{column.id + 100}", headers: valid_headers }
+    context 'when column does not exist' do
+      let!(:fake_column_id) { column.id + 100 }
+      before { get "/boards/#{board.id}/columns/#{fake_column_id}", headers: valid_headers }
 
       it 'returns HTTP status 404' do
         expect(response).to have_http_status(404)
@@ -177,7 +184,9 @@ RSpec.describe 'Columns API', type: :request do
   # Column index test suite
   describe 'GET /boards/:board_id/columns' do
     let!(:second_column) { create(:column, created_by: user, board: board) }
-    let!(:column_from_another_board) { create(:column, created_by: user) }
+    let!(:column_from_another_board) {
+      create(:column, created_by: user)
+    }
 
     context 'when valid request' do
       before { get "/boards/#{board.id}/columns", headers: valid_headers }
@@ -205,6 +214,13 @@ RSpec.describe 'Columns API', type: :request do
       it 'returns all the correct created_by_ids' do
         created_by_ids = [column.created_by_id, second_column.created_by_id].sort
         expect( json.map { |entry| entry['created_by_id']}.sort).to eq(created_by_ids)
+      end
+
+      it 'returns all the correct column_orders' do
+        # records are relaoded as creating a new record may affect
+        # column orders
+        column_orders = [column.reload.column_order, second_column.reload.column_order].sort
+        expect( json.map { |entry| entry['column_order']}.sort).to eq(column_orders)
       end
 
       it 'does not include the columns from another board' do
@@ -283,7 +299,7 @@ RSpec.describe 'Columns API', type: :request do
     end
 
     context 'when unauthorized request' do
-      before { delete "/boards/#{board.id}/columns/#{column.id}", params: valid_params, headers: missing_token_headers }
+      before { delete "/boards/#{board.id}/columns/#{column.id}", headers: missing_token_headers }
 
       it 'returns HTTP status 401' do
         expect(response).to have_http_status(401)

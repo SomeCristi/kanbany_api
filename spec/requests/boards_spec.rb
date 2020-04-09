@@ -96,7 +96,7 @@ RSpec.describe 'Boards API', type: :request do
         expect(json["name"]).to eq(valid_params[:board][:name])
       end
 
-      it 'updates the record' do
+      it 'saves the changes in the DB' do
         expect(board.reload.name).to eq(valid_params[:board][:name])
       end
     end
