@@ -8,8 +8,10 @@ class BoardsController < ApplicationController
   # return 422 if the provided params are not good
   # return 401 and an error message if request is unauthorized
   def create
-    board = Board.create!(board_params.merge(created_by: @current_user))
-    json_response(board, :created)
+    @board = Board.new(board_params.merge(created_by: @current_user))
+    authorize @board
+    @board.save!
+    json_response(@board, :created)
   end
 
   # PUT/PATCH /boards/:id
@@ -20,6 +22,7 @@ class BoardsController < ApplicationController
   # return 403 if user is not a member
   # return 401 and an error message if request is unauthorized
   def update
+    authorize @board
     @board.update!(board_params)
     json_response(@board)
   end
@@ -43,7 +46,7 @@ class BoardsController < ApplicationController
     json_response(@boards)
   end
 
-  # TODO add destroy
+  # TODO add destroy method
 
   private
 

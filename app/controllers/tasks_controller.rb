@@ -12,9 +12,12 @@ class TasksController < ApplicationController
   # return 422 if the provided params are not good
   # return 401 and an error message if request is unauthorized
   # return 403 if current user is not a member of the board
+  # return 404 if one of the used resources does not exist
   def create
-    task = Task.create!(task_params.except(:column_id).merge(created_by: @current_user, column_id: @column.id))
-    json_response(task, :created)
+    @task = Task.new(task_params.except(:column_id).merge(created_by: @current_user, column_id: @column.id))
+    authorize @task
+    @task.save!
+    json_response(@task, :created)
   end
 
   # PUT/PATCH /boards/:board_id/columns/:column_id/tasks/:id

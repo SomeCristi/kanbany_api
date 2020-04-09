@@ -10,9 +10,13 @@ class MembershipsController < ApplicationController
   # return 401 and an error message if request is unauthorized
   # return 403 if user is not a member of the board
   def create
-    membership = Membership.create!(membership_params.merge(board_id: @board.id))
-    json_response(membership, :created)
+    @membership = Membership.new(membership_params.merge(board_id: @board.id))
+    authorize @membership
+    @membership.save!
+    json_response(@membership, :created)
   end
+
+  # TODO add destroy method
 
   private
 

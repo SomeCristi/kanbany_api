@@ -17,6 +17,8 @@ class ApplicationController < ActionController::API
     json_response({ message: "Couldn't find Column with 'id'=#{id}"}, :not_found) unless @column
   end
 
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
   private
 
   # check if the current user is a member of the requested column
@@ -27,5 +29,13 @@ class ApplicationController < ActionController::API
   # Check for valid request token and return user
   def authorize_request
     @current_user = (AuthorizeApiRequest.new(request.headers).call)[:user]
+  end
+
+  def pundit_user
+    @current_user
+  end
+
+  def user_not_authorized
+    json_response({ message: 'You can not perform this action' }, :unauthorized)
   end
 end

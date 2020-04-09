@@ -11,10 +11,12 @@ class ColumnsController < ApplicationController
   # return 422 if the provided params are not good
   # return 401 and an error message if request is unauthorized
   # return 403 if current user is not a member of the board
-  # return 404 if the board that does not exist
+  # return 404 if the board does not exist
   def create
-    column = Column.create!(column_params.merge(created_by: @current_user, board_id: @board.id))
-    json_response(column, :created)
+    @column = Column.new(column_params.merge(created_by: @current_user, board_id: @board.id))
+    authorize @column
+    @column.save!
+    json_response(@column, :created)
   end
 
   # PUT/PATCH /boards/:board_id/columns/:id
@@ -25,6 +27,7 @@ class ColumnsController < ApplicationController
   # return 401 and an error message if request is unauthorized
   # return 403 if current user is not a member of the board
   def update
+    authorize @column
     @column.update!(column_params)
     json_response(@column)
   end
