@@ -40,6 +40,7 @@ class TasksController < ApplicationController
 
   # GET /boards/:board_id/columns/:column_id/tasks
   # returns all the tasks of the requested column
+  # in ascending task order
   # returns 200 if successful
   # returns 401 and an error message if request is unauthorized
   def index

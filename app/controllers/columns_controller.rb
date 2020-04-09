@@ -39,6 +39,7 @@ class ColumnsController < ApplicationController
 
   # GET /boards/:board_id/columns
   # returns all the columns of the requested board
+  # in ascending column order
   # returns 200 if successful
   # returns 401 and an error message if request is unauthorized
   def index
