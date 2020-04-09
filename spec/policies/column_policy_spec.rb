@@ -11,6 +11,7 @@ describe ColumnPolicy do
 
   permissions :index?, :show?, :update?, :create?, :destroy? do
     it "denies every action for person with normal role" do
+      expect(subject).not_to permit(User.new(role: :normal), Column.new())
     end
   end
 end
