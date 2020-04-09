@@ -37,6 +37,7 @@ class TasksController < ApplicationController
   # return 404 if resource does not exists
   # return 403 if current user is not a member of the board
   # return 401 and an error message if request is unauthorized
+  # render 404 one of the used resources does not exist
   def show
     json_response(@task)
   end
@@ -47,6 +48,7 @@ class TasksController < ApplicationController
   # return 200 if successful
   # return 401 and an error message if request is unauthorized
   # return 403 if current user is not a member of the board
+  # render 404 one of the used resources does not exist
   def index
     @tasks = Task.where(column_id: @column.id).order(:task_order)
     json_response(@tasks)
@@ -57,6 +59,7 @@ class TasksController < ApplicationController
   # return 401 and an error message if request is unauthorized
   # return 422 if the deletion cannot be done + message error
   # return 403 if current user is not a member of the board
+  # render 404 one of the used resources does not exist
   def destroy
     if @task.destroy
       json_response(@task)
@@ -79,6 +82,7 @@ class TasksController < ApplicationController
   end
 
   def set_task
-    @task = Task.find(params[:id])
+    @task = Task.where(id: params[:id], column_id: params[:column_id]).first
+    json_response({ message: "Task with id #{params[:id]} not found"}, :not_found) unless @task
   end
 end

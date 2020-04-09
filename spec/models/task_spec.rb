@@ -106,6 +106,7 @@ RSpec.describe Task, type: :model do
     let!(:first_task) { create(:task, column: column) }
     let!(:second_task) { create(:task, column: column) }
     let!(:third_task) { create(:task, column: column) }
+    let!(:fourth_task) { create(:task, column: column) }
 
     describe '#change_task_orders' do
       context 'when a new task is added to an pre-existing task order' do
@@ -126,8 +127,8 @@ RSpec.describe Task, type: :model do
     end
 
     describe "#update_task_orders" do
-      context 'when a task is moved up' do
-        let!(:fourth_task) { create(:task, column: column) }
+      context 'when a task is moved up on the same column' do
+        # let!(:fourth_task) { create(:task, column: column) }
         # not the order is first second third fourth task
         before { fourth_task.update(task_order: 2) }
 
@@ -142,8 +143,8 @@ RSpec.describe Task, type: :model do
         end
       end
 
-      context 'when a column is moved down' do
-        let!(:fourth_task) { create(:task, column: column) }
+      context 'when a column is moved down on the same column' do
+        # let!(:fourth_task) { create(:task, column: column) }
         # not the order is first second third fourth task
         before { second_task.update(task_order: 4) }
 
@@ -156,6 +157,39 @@ RSpec.describe Task, type: :model do
           expect(first_task.reload.task_order).to eq(1)
           expect(fourth_task.reload.task_order).to eq(3)
           expect(third_task.reload.task_order).to eq(2)
+        end
+      end
+
+      context 'when a task is moved on another column' do
+        let!(:column2) { create(:column, board: column.board) }
+        let!(:first_task2) { create(:task, column: column2) }
+        let!(:second_task2) { create(:task, column: column2) }
+        let!(:third_task2) { create(:task, column: column2) }
+
+        # column 1: first second third fourth
+        # column 2: first2 second2 third2
+        # move third task from the first column
+        # on the second position on column 2
+        # new order is:
+        # column 1: first second fourth
+        # column 2: first2 third second2 third2
+
+        before { third_task.update(column: column2, task_order: 2) }
+
+        it 'adds the task at the right task order on that column' do
+          expect(third_task.task_order).to eq(2)
+          expect(third_task.column_id).to eq(column2.id)
+        end
+
+        # now it is first third fourth second
+        it 'moves the other tasks accordingly' do
+          expect(first_task.reload.task_order).to eq(1)
+          expect(second_task.reload.task_order).to eq(2)
+          expect(fourth_task.reload.task_order).to eq(3)
+
+          expect(first_task2.reload.task_order).to eq(1)
+          expect(second_task2.reload.task_order).to eq(3)
+          expect(third_task2.reload.task_order).to eq(4)
         end
       end
     end
