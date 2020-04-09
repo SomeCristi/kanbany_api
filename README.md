@@ -5,20 +5,18 @@ application up and running.
 
 Things you may want to cover:
 
-* Ruby version
+* Ruby version\
+`2.5.1`
 
-* System dependencies
+* Rails version\
+`6.0.2`
 
-* Configuration
+* Database\
+postgresql is used as the database for Active Record
 
-* Database creation
+* Database creation\
+ To create the databse and run all the migraton run the following command: `rake db:create db:migrate`
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* Running the test suite
+  To run all the tests simply run the `rspec spec`.
+  To run the rake task that verifies that all factories used in the tests are valid: `rake factory_bot:lint`
