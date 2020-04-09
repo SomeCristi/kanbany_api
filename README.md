@@ -20,3 +20,10 @@ postgresql is used as the database for Active Record
 * Running the test suite
   To run all the tests simply run the `rspec spec`.
   To run the rake task that verifies that all factories used in the tests are valid: `rake factory_bot:lint`
+  
+* API requests documentation is available here: https://documenter.getpostman.com/view/8329686/SzYgQEnB
+
+* Flow\
+A user with admin role must be created from the rails console. Users can be created via API calls but their default role will be `normal` and only an admin can change their role.\
+\
+The flow of creation is boards -> columns -> tasks\. For this 3 resources all CRUD operations are available, besides DELETE for boards.
