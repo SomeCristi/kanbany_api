@@ -57,18 +57,18 @@ class Column < ApplicationRecord
   def update_column_orders
     if column_order_changed?
       if column_order > column_order_in_database
-        column_change_to_right
+        column_moved_to_right
       else
-        column_change_to_left
+        column_moved_to_left
       end
     end
   end
 
-  def column_change_to_right
+  def column_moved_to_right
     Column.where("column_order <= ? AND column_order > ?", column_order, column_order_in_database).update_all("column_order = column_order -1")
   end
 
-  def column_change_to_left
+  def column_moved_to_left
     Column.where("column_order < ? AND column_order >= ?", column_order_in_database, column_order).update_all("column_order = column_order + 1")
   end
 end
