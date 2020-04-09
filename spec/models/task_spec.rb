@@ -45,17 +45,39 @@ RSpec.describe Task, type: :model do
     end
 
     describe 'assigned_to_user_exists' do
-      let!(:task) { build(:task, assigned_to_id: create(:user).id + 100) }
+      context 'user does not exist' do
+        let!(:task) { build(:task, assigned_to_id: create(:user).id + 100) }
 
-      before { task.valid? }
+        before { task.valid? }
 
-      it 'returns task as not valid' do
-        expect(task.valid?).to eq(false)
+        it 'returns task as not valid' do
+          expect(task.valid?).to eq(false)
+        end
+
+        it 'contains an error message' do
+          expect(task.errors.messages[:assigned_to_id]).
+            to include('has invalid value. User must exist.')
+        end
       end
 
-      it 'contains an error message' do
-        expect(task.errors.messages[:assigned_to_id]).
-          to include('has invalid value. User must exist.')
+      context 'user is not from the board' do
+        let!(:user) { create(:user) }
+        let!(:task) { build(:task, assigned_to: user) }
+
+
+        before do
+          user.boards.destroy_all
+          task.valid?
+        end
+
+        it 'returns task as not valid' do
+          expect(task.valid?).to eq(false)
+        end
+
+        it 'contains an error message' do
+          expect(task.errors.messages[:assigned_to_id]).
+            to include('must be a member of this board')
+        end
       end
     end
   end

@@ -9,7 +9,7 @@ class Task < ApplicationRecord
   validates :created_by, :title, :task_order, :column, presence: true
   validates :task_order, numericality: { greater_than: 0 }
   validate :check_task_order
-  validate :assigned_to_user_exists
+  validate :assigned_to_user
 
   # Callbacks
   before_create :change_task_orders
@@ -76,12 +76,20 @@ class Task < ApplicationRecord
       .update_all('task_order = task_order + 1')
   end
 
-  def assigned_to_user_exists
+  def assigned_to_user
     if assigned_to_id.present?
-      errors.add(
-        :assigned_to_id,
-        'has invalid value. User must exist.'
-      ) if User.where(id: assigned_to_id).blank?
+      user = User.where(id: assigned_to_id).first
+      if user.blank?
+        errors.add(
+          :assigned_to_id,
+          'has invalid value. User must exist.'
+        ) if user.blank?
+      else
+        errors.add(
+          :assigned_to_id,
+          'must be a member of this board'
+        ) unless user.boards.pluck(:id).include?(self.column.board.id)
+      end
     end
   end
 
