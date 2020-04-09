@@ -9,6 +9,7 @@ class Task < ApplicationRecord
   validates :created_by, :title, :task_order, :column, presence: true
   validates :task_order, numericality: { greater_than: 0 }
   validate :check_task_order
+  validate :assigned_to_user_exists
 
   # Callbacks
   before_create :change_task_orders
@@ -21,7 +22,8 @@ class Task < ApplicationRecord
   # Example: if the last task_order on a column is 3, the next one
   # cannot be 5
   def check_task_order
-    # Checks if column is present(not column id because an id that does not belong to a column can be provided)
+    # Checks if column is present
+    # (not column id because an id that does not belong to a column can be provided)
     # in case this valdiation is run before the one that checks the presence of column
     # If column is nil the comparison inside the if failed
     # the same goes for column order
@@ -36,15 +38,19 @@ class Task < ApplicationRecord
   # current task order to have their old order value + 1.
   # This uses only one SQL UPDATE Statement
   # Example: If there are 3 tasks with order 1, 2, 3 and we want to add one task
-  # on the second position, the tasks that were on position 2 and 3 will be on position 3 and 4
+  # on the second position
+  # the tasks that were on position 2 and 3 will be on position 3 and 4
   def change_task_orders
-    Task.where("task_order >= ?", task_order).update_all("task_order = task_order + 1")
+    Task
+      .where("task_order >= ?", task_order)
+      .update_all("task_order = task_order + 1")
   end
 
   # Checks if task order has changed and if so
   # checks if new order is bigger than old order(task was moved down)
   # in this case it will move the other tasks accordingly:
-  # all the tasks with task order between the old and the new order(and equal to new) of the current
+  # all the tasks with task order between the old and
+  # the new order(and equal to new) of the current
   # task will have their task order reduced by 1
   # else, if the new order of the current task is less than the old one
   # (task was moved up) add + 1 to the tasks orders between the new(and equal) and the old one
@@ -59,11 +65,24 @@ class Task < ApplicationRecord
   end
 
   def task_moved_down
-    Task.where("task_order <= ? AND task_order > ?", task_order, task_order_in_database).update_all("task_order = task_order -1")
+    Task
+      .where('task_order <= ? AND task_order > ?', task_order, task_order_in_database)
+      .update_all('task_order = task_order -1')
   end
 
   def task_moved_up
-    Task.where("task_order < ? AND task_order >= ?", task_order_in_database, task_order).update_all("task_order = task_order + 1")
+    Task
+      .where('task_order < ? AND task_order >= ?', task_order_in_database, task_order)
+      .update_all('task_order = task_order + 1')
+  end
+
+  def assigned_to_user_exists
+    if assigned_to_id.present?
+      errors.add(
+        :assigned_to_id,
+        'has invalid value. User must exist.'
+      ) if User.where(id: assigned_to_id).blank?
+    end
   end
 
 end

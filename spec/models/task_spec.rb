@@ -43,9 +43,24 @@ RSpec.describe Task, type: :model do
           to include('must be maximum last task order + 1')
       end
     end
+
+    describe 'assigned_to_user_exists' do
+      let!(:task) { build(:task, assigned_to_id: create(:user).id + 100) }
+
+      before { task.valid? }
+
+      it 'returns task as not valid' do
+        expect(task.valid?).to eq(false)
+      end
+
+      it 'contains an error message' do
+        expect(task.errors.messages[:assigned_to_id]).
+          to include('has invalid value. User must exist.')
+      end
+    end
   end
 
-  context "Callbacks" do
+  context 'Callbacks' do
     let!(:column) { create(:column) }
     let!(:first_task) { create(:task, column: column) }
     let!(:second_task) { create(:task, column: column) }
