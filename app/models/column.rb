@@ -27,7 +27,8 @@ class Column < ApplicationRecord
   # Example: if the last column_order on a column is 3, the next one
   # cannot be 5
   def check_column_order
-    # Checks if board is present(not board id because an id that does not belong to a board can be provided)
+    # Checks if board is present
+    # (not board id because an id that does not belong to a board can be provided)
     # in case this valdiation is run before the one that checks the presence of board
     # If board is nil the comparison inside the if failed
     # the same goes for column order
@@ -44,16 +45,20 @@ class Column < ApplicationRecord
   # Example: If there are 3 columns with order 1, 2, 3 and we want to add one column
   # on the second position, the columns that were on position 2 and 3 will be on position 3 and 4
   def change_column_orders
-    Column.where("column_order >= ?", column_order).update_all("column_order = column_order + 1")
+    Column
+      .where("column_order >= ?", column_order)
+      .update_all("column_order = column_order + 1")
   end
 
   # Checks if column order has changed and if so
   # checks if new order is bigger than old order(column was moved to the right)
   # in this case it will move the other columns accordingly:
-  # all the columns with column order between the old and the new order(and equal to new) of the current
+  # all the columns with column order between the old and
+  # the new order(and equal to new) of the current
   # column will have their column order reduced by 1
   # else, if the new order of the current column is less than the old one
-  # (column was moved to the left) add + 1 to the columns orders between the new(and equal) and the old one
+  # (column was moved to the left) add + 1 to the columns orders
+  # between the new(and equal) and the old one
   def update_column_orders
     if column_order_changed?
       if column_order > column_order_in_database
@@ -65,10 +70,14 @@ class Column < ApplicationRecord
   end
 
   def column_moved_to_right
-    Column.where("column_order <= ? AND column_order > ?", column_order, column_order_in_database).update_all("column_order = column_order -1")
+    Column
+      .where("column_order <= ? AND column_order > ?", column_order, column_order_in_database)
+      .update_all("column_order = column_order -1")
   end
 
   def column_moved_to_left
-    Column.where("column_order < ? AND column_order >= ?", column_order_in_database, column_order).update_all("column_order = column_order + 1")
+    Column
+      .where("column_order < ? AND column_order >= ?", column_order_in_database, column_order)
+      .update_all("column_order = column_order + 1")
   end
 end
