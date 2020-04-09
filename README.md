@@ -34,7 +34,7 @@ For `a b c d e f` -> move `b` to the 5th position ->`a c d e b f`\
 For `a b c d e f` -> move `d` to the second position -> `a d b c e f`\
 The same logic applies to tasks.
 \
-When a new column is created, it can be added everywhere, but the value msut be between 1 and the greatest column order on the board. If it's position is not the last, the other ones will be moved.The same logic applies for tasks. For example: \
+When a new column is created, it can be added everywhere, but the value msut be between 1 and the greatest column order on the board. If it's position is not the last, then the other ones will be moved.The same tasks, they can be added on any existing column on that board, on every valid position(between 1 and max order of the column's tasks + 1). For example: \
 \
 ` a b c d` -> we add `e` on the second position -> `a e b c d` \
 \
