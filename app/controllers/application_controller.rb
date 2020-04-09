@@ -18,7 +18,7 @@ class ApplicationController < ActionController::API
 
   private
 
-  # checks if the current user is a member of the requested column
+  # check if the current user is a member of the requested column
   def has_membership?
     Membership.is_member?(@current_user.id, @board.id)
   end

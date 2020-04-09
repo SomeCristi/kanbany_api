@@ -8,50 +8,53 @@ class TasksController < ApplicationController
   # column id is taken from the current column which is taken from
   # the request's params
   # created_by_id attribute takes the current user's id
-  # returns 201 if successful
-  # returns 422 if the provided params are not good
-  # returns 401 and an error message if request is unauthorized
+  # return 201 if successful
+  # return 422 if the provided params are not good
+  # return 401 and an error message if request is unauthorized
+  # return 403 if current user is not a member of the board
   def create
-    task = Task.create!(task_params.merge(created_by: @current_user, column_id: @column.id))
+    task = Task.create!(task_params.except(:column_id).merge(created_by: @current_user, column_id: @column.id))
     json_response(task, :created)
   end
 
   # PUT/PATCH /boards/:board_id/columns/:column_id/tasks/:id
   # updates the task with the requested params
-  # returns 200 if successful
-  # returns 422 if the provided params are not good
-  # returns 404 if the resource does not exist
-  # return 403 if user is not a member of the board
-  # returns 401 and an error message if request is unauthorized
+  # return 200 if successful
+  # return 422 if the provided params are not good
+  # return 404 if the resource does not exist
+  # return 403 if current user is not a member of the board
+  # return 401 and an error message if request is unauthorized
   def update
     @task.update!(task_params)
     json_response(@task)
   end
 
   # GET /boards/:board_id/columns/:column_id/tasks/:id
-  # returns the requested task
-  # returns 200 if successful
-  # returns 404 if resource does not exists
-  # return 403 if user is not a member of the board
-  # returns 401 and an error message if request is unauthorized
+  # return the requested task
+  # return 200 if successful
+  # return 404 if resource does not exists
+  # return 403 if current user is not a member of the board
+  # return 401 and an error message if request is unauthorized
   def show
     json_response(@task)
   end
 
   # GET /boards/:board_id/columns/:column_id/tasks
-  # returns all the tasks of the requested column
+  # return all the tasks of the requested column
   # in ascending task order
-  # returns 200 if successful
-  # returns 401 and an error message if request is unauthorized
+  # return 200 if successful
+  # return 401 and an error message if request is unauthorized
+  # return 403 if current user is not a member of the board
   def index
     @tasks = Task.where(column_id: @column.id).order(:task_order)
     json_response(@tasks)
   end
 
   # DELETE /boards/:board_id/columns/:column_id/tasks/:id
-  # returns 200 if successful and the deleted object
-  # returns 401 and an error message if request is unauthorized
+  # return 200 if successful and the deleted object
+  # return 401 and an error message if request is unauthorized
   # return 422 if the deletion cannot be done + message error
+  # return 403 if current user is not a member of the board
   def destroy
     if @task.destroy
       json_response(@task)
@@ -63,7 +66,14 @@ class TasksController < ApplicationController
   private
 
   def task_params
-    params.require(:task).permit(:title, :description, :created_by_id, :assigned_to_id, :task_order)
+    params.require(:task).permit(
+      :title,
+      :description,
+      :created_by_id,
+      :assigned_to_id,
+      :task_order,
+      :column_id
+    )
   end
 
   def set_task
