@@ -7,6 +7,10 @@ describe UserPolicy do
     it "denies access if not admin" do
       expect(subject).not_to permit(User.new(role: :developer), User.new())
     end
+
+    it "denies access the other user is also admin" do
+      expect(subject).not_to permit(User.new(role: :admin), User.new(role: :admin))
+    end
   end
 
   permissions :index?, :show?, :update?, :create?, :destroy? do

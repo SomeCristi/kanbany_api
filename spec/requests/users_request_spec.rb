@@ -53,7 +53,7 @@ RSpec.describe 'Users API', type: :request do
   # User change role test suite
   describe 'PUT /change_role' do
     let(:user) { create(:user) }
-    let!(:another_user) { create(:user) }
+    let!(:another_user) { create(:user, role: :normal) }
     context 'when valid request' do
       let(:valid_attributes) do
         {
