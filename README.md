@@ -1,8 +1,4 @@
 # README
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
 Things you may want to cover:
 
 * Ruby version\
@@ -22,6 +18,9 @@ postgresql is used as the database for Active Record
   To run the rake task that verifies that all factories used in the tests are valid: `rake factory_bot:lint`
   
 * API requests documentation is available here: https://documenter.getpostman.com/view/8329686/SzYgQEnB
+* Authentication
+\
+Is made by JWT tokens as this is an RESTful API.
 
 * Flow\
 A user with admin role must be created from the rails console. Users can be created via API calls but their default role will be `normal` and only an admin can change their role.\
