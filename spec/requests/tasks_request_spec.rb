@@ -144,6 +144,34 @@ RSpec.describe 'Tasks API', type: :request do
       end
     end
 
+    context 'when moved to a column from another board' do
+      let!(:invalid_params) do
+        {
+          task: {
+            column_id: create(:column).id
+          }
+        }
+      end
+
+      before {
+        put "/boards/#{board.id}/columns/#{column.id}/tasks/#{task.id}",
+        params: invalid_params,
+        headers: valid_headers
+      }
+
+      it 'returns HTTP status 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'does not update the record' do
+        expect(task.reload.column_id).to eq(column.id)
+      end
+
+      it 'returns failure message' do
+        expect(json["message"]).to include("Validation failed: cannot move task to another column")
+      end
+    end
+
     context 'when unauthorized request' do
       before {
         put "/boards/#{board.id}/columns/#{column.id}/tasks/#{task.id}",

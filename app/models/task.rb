@@ -10,14 +10,12 @@ class Task < ApplicationRecord
   validates :task_order, numericality: { greater_than: 0 }
   validate :check_task_order
   validate :assigned_to_user
-  validate :column_from_same_board
+  validate :column_from_same_board, on: :update, if: :column_id_changed?
 
   # Callbacks
   before_create :change_task_orders
   before_update :update_task_orders
-  # TODO tests
   before_destroy :rearrange_tasks
-
 
   private
 
@@ -110,28 +108,27 @@ class Task < ApplicationRecord
   end
 
   def column_from_same_board
-    if column_id_changed? && column_id_in_database != nil
       new_column_board = column.board.id
       # use find as old column still exists
       # because a column with no tasks cannot
       # be deleted
       old_column_board = Column.find(column_id_in_database).board.id
-      errors.add(
-        :column_id,
-        'new column must be from the same board'
-      ) if new_column_board != old_column_board
-    end
 
-    def rearrange_tasks_new_column
+      errors.add(
+        :base,
+        'cannot move task to another column'
+      ) if new_column_board != old_column_board
+  end
+
+  def rearrange_tasks_new_column
     Task
       .where('column_id = ? AND task_order >= ?', column_id, task_order)
       .update_all('task_order = task_order + 1')
-    end
+  end
 
-    def rearrange_tasks_old_column
+  def rearrange_tasks_old_column
     Task
       .where('column_id = ? AND task_order > ?', column_id_in_database, task_order_in_database)
       .update_all('task_order = task_order -1')
-    end
   end
 end

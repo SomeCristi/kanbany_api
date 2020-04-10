@@ -16,10 +16,11 @@ class Column < ApplicationRecord
 
   validates :column_order, numericality: { greater_than: 0 }
 
+  validate :board_change, on: :update
+
   # Callbacks
   before_create :change_column_orders
   before_update :update_column_orders
-  # TODO test
   before_destroy :rearrange_columns
 
   private
@@ -87,5 +88,13 @@ class Column < ApplicationRecord
     Column
       .where("column_order < ? AND column_order >= ? AND board_id = ?", column_order_in_database, column_order, board_id)
       .update_all("column_order = column_order + 1")
+  end
+
+  # this is not really necessary as board_id will not be accepted as
+  # param in the columns controller
+  def board_change
+    errors.add(
+      :base, 'moving a column to another board is forbidden'
+    ) if board_id_changed?
   end
 end

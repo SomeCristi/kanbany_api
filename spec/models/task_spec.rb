@@ -95,8 +95,8 @@ RSpec.describe Task, type: :model do
         expect(task.valid?).to eq(false)
       end
       it 'contains an error message' do
-        expect(task.errors.messages[:column_id]).
-          to include('new column must be from the same board')
+        expect(task.errors.messages[:base]).
+          to include('cannot move task to another column')
       end
     end
   end
