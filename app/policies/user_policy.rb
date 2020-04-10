@@ -7,6 +7,6 @@ class UserPolicy < ApplicationPolicy
   end
 
   def change_role?
-    user.admin?
+    user.admin? && !resource.admin?
   end
 end
