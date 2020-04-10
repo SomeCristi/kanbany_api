@@ -39,20 +39,19 @@ When a new column is created, it can be added everywhere, but the value msut be 
 ` a b c d` -> we add `e` on the second position -> `a e b c d` \
 \
 Tasks can also be moved between columns(if task order will not be specified, there might be errors as the task order can be greater than the new column's biggest task order) and there will be changes on both of them.
-\
-`a`  `a'`\
-`b`  `b'`\
-`c`  `c'`
-\
-`d`  `d'`
-\
+```ruby
+a  a'
+b  b'
+c  c'
+d  d'
+```
 -> move `b` between `c'` and `d'` (position 4)\
 ```ruby
-`a`  `a'`
-`c`  `b'`
-`d`  `c'`
-     `b`
-`    `d'`
+a  a'
+c  b'
+d  c'
+   b
+   d'
 ```
 * Roles\
 The API has a simple role system. The roles are: `admin`,`normal`,`developer`,`project_manager`.\
