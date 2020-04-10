@@ -49,9 +49,10 @@ class Task < ApplicationRecord
       .where("task_order >= ? AND column_id = ?", task_order, column_id)
       .update_all("task_order = task_order + 1")
   end
-
-  # Checks if task order has changed and if so
-  # checks if new order is bigger than old order(task was moved down)
+  # Check if column id of the task has changed. If so,
+  # rearange tasks on both columns (initial task's column and new task's column)
+  # If column id has not changed then check if task order has changed and if true
+  # check if new order is bigger than old order(task was moved down)
   # in this case it will move the other tasks accordingly:
   # all the tasks with task order between the old and
   # the new order(and equal to new) of the current
@@ -60,8 +61,8 @@ class Task < ApplicationRecord
   # (task was moved up) add + 1 to the tasks orders between the new(and equal) and the old one
   def update_task_orders
     if column_id_changed?
-      rearrange_tickets_old_column
-      rearrange_tickets_new_column
+      rearrange_tasks_old_column
+      rearrange_tasks_new_column
     else
       if task_order_changed?
         if task_order > task_order_in_database
@@ -112,7 +113,7 @@ class Task < ApplicationRecord
     if column_id_changed? && column_id_in_database != nil
       new_column_board = column.board.id
       # use find as old column still exists
-      # because a column with no tickets cannot
+      # because a column with no tasks cannot
       # be deleted
       old_column_board = Column.find(column_id_in_database).board.id
       errors.add(
@@ -121,13 +122,13 @@ class Task < ApplicationRecord
       ) if new_column_board != old_column_board
     end
 
-    def rearrange_tickets_new_column
+    def rearrange_tasks_new_column
     Task
       .where('column_id = ? AND task_order >= ?', column_id, task_order)
       .update_all('task_order = task_order + 1')
     end
 
-    def rearrange_tickets_old_column
+    def rearrange_tasks_old_column
     Task
       .where('column_id = ? AND task_order > ?', column_id_in_database, task_order_in_database)
       .update_all('task_order = task_order -1')
