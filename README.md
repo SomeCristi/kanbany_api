@@ -44,7 +44,7 @@ b  b'
 c  c'
 d  d'
 ```
--> move `b` between `c'` and `d'` (position 4)\
+-> move `b` between `c'` and `d'` (position 4)
 ```ruby
 a  a'
 c  b'
@@ -54,6 +54,6 @@ d  c'
 ```
 * Roles\
 The API has a simple role system. The roles are: `admin`,`normal`,`developer`,`project_manager`.\
-`Admins` can do every action. `Project_managers` and `developers` cannot create and update a board, create and update a column and change the role of a user. Moreover, `developers` cannot assign users to boards, add and delete tasks.
+`Admins` can do every action. `Project managers` and `developers` cannot create or update a board, create or update a column or change the role of a user. Moreover, `developers` can't assign users to boards, add or delete tasks.
 The users with `normal` role cannot do any actions.
 
