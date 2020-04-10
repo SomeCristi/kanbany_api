@@ -9,4 +9,8 @@ class TaskPolicy < ApplicationPolicy
   def create?
     user.admin? || user.project_manager?
   end
+
+  def destroy?
+    user.admin? || user.project_manager?
+  end
 end

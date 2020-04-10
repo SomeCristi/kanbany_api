@@ -3,7 +3,7 @@ require 'rails_helper'
 describe TaskPolicy do
   subject { described_class }
 
-  permissions :create? do
+  permissions :create?, :destroy? do
     it "denies access if not admin" do
       expect(subject).not_to permit(User.new(role: :developer), Task.new())
     end
