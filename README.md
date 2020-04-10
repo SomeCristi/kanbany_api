@@ -44,7 +44,7 @@ b  b'
 c  c'
 d  d'
 ```
--> move `b` between `c'` and `d'` (position 4)\
+-> move `b` between `c'` and `d'` (position 4)
 ```ruby
 a  a'
 c  b'
