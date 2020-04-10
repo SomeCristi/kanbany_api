@@ -11,7 +11,7 @@ Things you may want to cover:
 postgresql is used as the database for Active Record
 
 * Database creation\
- To create the databse and run all the migrations run the following command: `rake db:create db:migrate`
+ To create the databse and run all the migrations execute the following command: `rake db:create db:migrate`
 
 * Running the test suite
   To run all the tests simply run the `rspec spec`.
