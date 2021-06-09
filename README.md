@@ -25,7 +25,7 @@ Is made by JWT tokens as this is an RESTful API.
 * Flow\
 A user with admin role must be created from the rails console. Users can be created via API calls but their default role will be `normal` and only an admin can change their role. Any admin can change the role of another user, if it's role is not also admin.\
 \
-The flow of creation is boards -> columns -> tasks\. For this 3 resources all CRUD operations are available, besides DELETE for boards. When a board is created the admin that created it will be assigned as a member automatically. The user has to be a member of the board to change anything on the boards, columns, tasks, or board members.\
+The flow of creation is boards -> columns -> tasks\. For these 3 resources all CRUD operations are available, besides DELETE for boards. When a board is created the admin that created it will be assigned as a member automatically. The user has to be a member of the board to change anything on the boards, columns, tasks, or board members.\
 \
 The order of tasks on a column and of columns on a board starts from 1 and must be unique (e.g. there won't be two task orders with the same value on the same column). There is no validation to check the uniqueness because, when changing values, there might be two equal values before the process of rearranging the rest has finished. Moreover, tasks and columns can't be moved to another board.\
 \
